@@ -147,7 +147,7 @@
                     Prevention</p>
             </div>
             <div class="mt-2 md:mt-0 text-xs font-mono bg-gray-800/70 px-3 py-1.5 rounded-full border border-gray-700">
-                OS Concurrency Lab</div>
+            </div>
         </div>
 
         <!-- Navigation -->
@@ -238,27 +238,138 @@
         // ========== 2. SOLUTION PAGE ==========
         function renderSolutionPage() {
             pages.solution.innerHTML = `
-                <div class="bg-gray-900/70 rounded-2xl p-6 border border-gray-800 shadow-2xl">
-                    <h2 class="text-2xl font-bold flex gap-2 items-center"><span class="text-3xl">🔢</span> Resource Hierarchy (Ordered Allocation)</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-5">
-                        <div class="bg-gradient-to-br from-indigo-950/40 to-gray-800/40 rounded-xl p-5 border border-indigo-500/30">
-                            <h3 class="text-xl font-semibold text-indigo-300">📌 Breaking Circular Wait</h3>
-                            <ul class="list-disc pl-5 mt-3 space-y-2 text-gray-200">
-                                <li>Assign <span class="font-bold text-green-300">unique IDs</span> to each book: Book 1 (ID=1, lower), Book 2 (ID=2, higher).</li>
-                                <li>Enforce global rule: <span class="text-yellow-300">"Request resources in increasing order"</span>.</li>
-                                <li>If a student needs both books, they must acquire Book 1 <strong>FIRST</strong>, then Book 2.</li>
-                                <li>This eliminates circular wait: no cyclic dependency can form.</li>
-                            </ul>
-                            <div class="mt-5 p-3 bg-black/40 rounded-lg text-sm"><span class="text-green-400">✅ Example:</span> Both Alice & Bob request Book1 first → one gets it, the other waits. No deadlock.</div>
+                <style>
+                    @keyframes slideInUp {
+                        from { opacity: 0; transform: translateY(20px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                    .animate-stagger-1 { animation: slideInUp 0.6s ease-out 0.1s both; }
+                    .animate-stagger-2 { animation: slideInUp 0.6s ease-out 0.3s both; }
+                    .animate-stagger-3 { animation: slideInUp 0.6s ease-out 0.5s both; }
+                    .animate-stagger-4 { animation: slideInUp 0.6s ease-out 0.7s both; }
+                    @keyframes bgFlow {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                    .bg-animated-gradient {
+                        background-size: 200% 200%;
+                        animation: bgFlow 4s ease infinite;
+                    }
+                </style>
+                <div class="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-gray-700/60 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r bg-animated-gradient from-emerald-500 via-teal-500 to-cyan-500"></div>
+
+                    <h2 class="text-3xl font-extrabold flex gap-3 items-center mb-6"><span class="text-4xl animate-bounce">🔢</span> Resource Hierarchy (Ordered Allocation)</h2>
+                    
+                    <!-- Phase Diagram Section -->
+                    <div class="mb-8 p-6 md:p-8 bg-gray-950/60 rounded-[2rem] border border-gray-800 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+                        <h3 class="text-xl font-bold text-teal-300 mb-8 flex items-center gap-2">🕹️ Allocation Phase Diagram</h3>
+                        
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative px-4 md:px-12">
+                            <!-- Background Connecting Line (Desktop) -->
+                            <div class="hidden md:block absolute top-[28px] left-[15%] right-[15%] h-1 bg-gradient-to-r bg-animated-gradient from-amber-700 via-teal-600 to-purple-600 -translate-y-1/2 z-0 opacity-50 rounded"></div>
+                            
+                            <!-- Phase 1 -->
+                            <div class="relative z-10 flex flex-col items-center group w-full md:w-1/4 animate-stagger-1">
+                                <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-800 border-[3px] border-amber-500/60 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(245,158,11,0.3)] group-hover:scale-110 transition-transform mb-4 cursor-default">
+                                    📘
+                                </div>
+                                <div class="bg-gray-800/80 px-4 py-3 rounded-2xl border border-gray-600/50 shadow-lg text-center w-full max-w-[160px] group-hover:-translate-y-2 transition-transform backdrop-blur-sm">
+                                    <h4 class="font-bold text-amber-400 text-sm tracking-wide">PHASE 1</h4>
+                                    <p class="text-xs font-mono bg-black/40 py-1 px-1 rounded mt-1 text-gray-300">Request ID=1</p>
+                                    <p class="text-[11px] text-gray-400 mt-2">Student MUST request lower ID book first.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Arrow (Mobile) -->
+                            <div class="md:hidden text-teal-500 text-2xl font-bold transform rotate-90 animate-pulse">➔</div>
+                            
+                            <!-- Phase 2 -->
+                            <div class="relative z-10 flex flex-col items-center group w-full md:w-1/4 animate-stagger-2">
+                                <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-800 border-[3px] border-teal-500/60 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(20,184,166,0.3)] group-hover:scale-110 transition-transform mb-4 cursor-default">
+                                    ✅
+                                </div>
+                                <div class="bg-gray-800/80 px-4 py-3 rounded-2xl border border-gray-600/50 shadow-lg text-center w-full max-w-[160px] group-hover:-translate-y-2 transition-transform backdrop-blur-sm">
+                                    <h4 class="font-bold text-teal-400 text-sm tracking-wide">PHASE 2</h4>
+                                    <p class="text-xs font-mono bg-black/40 py-1 px-1 rounded mt-1 text-gray-300">Acquire ID=1</p>
+                                    <p class="text-[11px] text-gray-400 mt-2">Book 1 is acquired. Safe to proceed.</p>
+                                </div>
+                            </div>
+
+                            <!-- Arrow (Mobile) -->
+                            <div class="md:hidden text-blue-500 text-2xl font-bold transform rotate-90 animate-pulse">➔</div>
+
+                            <!-- Phase 3 -->
+                            <div class="relative z-10 flex flex-col items-center group w-full md:w-1/4 animate-stagger-3">
+                                <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-800 border-[3px] border-blue-500/60 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:scale-110 transition-transform mb-4 cursor-default">
+                                    📗
+                                </div>
+                                <div class="bg-gray-800/80 px-4 py-3 rounded-2xl border border-gray-600/50 shadow-lg text-center w-full max-w-[160px] group-hover:-translate-y-2 transition-transform backdrop-blur-sm">
+                                    <h4 class="font-bold text-blue-400 text-sm tracking-wide">PHASE 3</h4>
+                                    <p class="text-xs font-mono bg-black/40 py-1 px-1 rounded mt-1 text-gray-300">Request ID=2</p>
+                                    <p class="text-[11px] text-gray-400 mt-2">Now request the higher ID resource safely.</p>
+                                </div>
+                            </div>
+
+                            <!-- Arrow (Mobile) -->
+                            <div class="md:hidden text-purple-500 text-2xl font-bold transform rotate-90 animate-pulse">➔</div>
+
+                            <!-- Phase 4 -->
+                            <div class="relative z-10 flex flex-col items-center group w-full md:w-1/4 animate-stagger-4">
+                                <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-800 border-[3px] border-purple-500/60 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(168,85,247,0.3)] group-hover:scale-110 transition-transform mb-4 cursor-default animate-[pulse_2s_ease-in-out_infinite]">
+                                    🎓
+                                </div>
+                                <div class="bg-gray-800/80 px-4 py-3 rounded-2xl border border-gray-600/50 shadow-lg text-center w-full max-w-[160px] group-hover:-translate-y-2 transition-transform backdrop-blur-sm">
+                                    <h4 class="font-bold text-purple-400 text-sm tracking-wide">PHASE 4</h4>
+                                    <p class="text-xs font-mono bg-black/40 py-1 px-1 rounded mt-1 text-gray-300">Execute</p>
+                                    <p class="text-[11px] text-gray-400 mt-2">Finish task and release ALL books globally.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="bg-gray-800/40 rounded-xl p-5 border border-gray-700">
-                            <h3 class="text-xl font-semibold text-cyan-300">⚖️ Deadlock State vs Safe State</h3>
-                            <div class="overflow-x-auto mt-3">
+                        <div class="mt-10 text-center bg-gray-900/50 py-3 px-6 rounded-xl border border-gray-700/50 text-sm text-gray-300 max-w-2xl mx-auto backdrop-blur-sm shadow-md transition-all duration-500 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                            💡 <strong class="text-white">Why this works:</strong> Because nobody can skip ahead and request Book 2 without having Book 1 first, a cyclic dependency (where Alice waits for Bob, and Bob waits for Alice) becomes mathematically impossible.
+                        </div>
+                    </div>
+
+                    <!-- Side-by-Side Explanation -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-gradient-to-br from-indigo-950/40 to-gray-800/40 rounded-2xl p-6 border border-indigo-500/30 shadow-lg hover:border-indigo-400/50 transition-colors duration-300 animate-stagger-2">
+                            <h3 class="text-xl font-semibold text-indigo-300 mb-4">📌 The Underlying Logic</h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-start gap-3 text-gray-300">
+                                    <div class="bg-indigo-900/50 px-2.5 py-0.5 rounded text-indigo-300 mt-0.5 shadow font-bold">1</div>
+                                    <p>Assign <span class="font-bold text-green-300">unique integer IDs</span> to all system resources. (Book 1 = ID 1, Book 2 = ID 2).</p>
+                                </li>
+                                <li class="flex items-start gap-3 text-gray-300">
+                                    <div class="bg-indigo-900/50 px-2.5 py-0.5 rounded text-indigo-300 mt-0.5 shadow font-bold">2</div>
+                                    <p>Enforce a global OS rule: <span class="text-yellow-300">"Processes must request resources in an increasing numerical order."</span></p>
+                                </li>
+                                <li class="flex items-start gap-3 text-gray-300">
+                                    <div class="bg-indigo-900/50 px-2.5 py-0.5 rounded text-indigo-300 mt-0.5 shadow font-bold">3</div>
+                                    <p>If a student attempts to request a lower ID after holding a higher ID, the OS automatically denies the request.</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 backdrop-blur-sm shadow-lg hover:border-cyan-500/30 transition-colors duration-300 animate-stagger-3">
+                            <h3 class="text-xl font-semibold text-cyan-300 mb-4">⚖️ Deadlock State vs Safe State</h3>
+                            <div class="overflow-x-auto rounded-xl border border-gray-700/50 shadow-inner">
                                 <table class="min-w-full text-sm border-separate border-spacing-0">
-                                    <thead class="bg-gray-800"><tr><th class="p-3 rounded-l-lg">Scenario</th><th class="p-3">Allocation Order</th><th class="p-3 rounded-r-lg">Outcome</th></tr></thead>
-                                    <tbody>
-                                        <tr class="border-b border-gray-700"><td class="p-3 text-red-300 font-medium">Deadlock State</td><td class="p-3">Alice → Book1, Bob → Book2, then each requests other</td><td class="p-3 text-red-400">Circular Wait → 💀 Deadlock</td></tr>
-                                        <tr class="bg-gray-800/30"><td class="p-3 text-green-300 font-medium">Safe State</td><td class="p-3">Hierarchy enforced: Both request lower ID (Book1) first</td><td class="p-3 text-green-400">No cycle → ✅ Safe</td></tr>
+                                    <thead class="bg-gray-900/80">
+                                        <tr>
+                                            <th class="p-4 text-left font-semibold text-gray-200">Execution Scenario</th>
+                                            <th class="p-4 text-left font-semibold text-gray-200">Outcome</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-700/50">
+                                        <tr class="bg-red-950/20 hover:bg-red-950/40 transition-colors">
+                                            <td class="p-4"><strong class="text-red-300">Without Hierarchy:</strong> Alice grabs Book 1, Bob grabs Book 2. They request each other's books.</td>
+                                            <td class="p-4 text-red-400 font-bold whitespace-nowrap">💀 Deadlock</td>
+                                        </tr>
+                                        <tr class="bg-green-950/20 hover:bg-green-950/40 transition-colors">
+                                            <td class="p-4"><strong class="text-green-300">With Hierarchy:</strong> Both MUST request Book 1 first. Winner gets it; loser waits blocked. Winner then requests Book 2 safely.</td>
+                                            <td class="p-4 text-green-400 font-bold whitespace-nowrap">✅ Safe state</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -282,17 +393,17 @@
 
         function drawEdges() {
             const layer = document.getElementById('edges-layer');
-            if(!layer || !studentADiv || !studentBDiv || !book1Div || !book2Div) return;
+            if (!layer || !studentADiv || !studentBDiv || !book1Div || !book2Div) return;
             layer.innerHTML = ''; // clear
 
             const svg = document.getElementById('anim-svg');
             const svgRect = svg.getBoundingClientRect();
             // If svg is hidden or zero size, don't draw
-            if(svgRect.width === 0) return;
+            if (svgRect.width === 0) return;
 
             const getC = (el) => {
                 const r = el.getBoundingClientRect();
-                return { x: r.left + r.width/2 - svgRect.left, y: r.top + r.height/2 - svgRect.top };
+                return { x: r.left + r.width / 2 - svgRect.left, y: r.top + r.height / 2 - svgRect.top };
             };
 
             const addLine = (fromEl, toEl, state) => {
@@ -300,15 +411,15 @@
                 const p2 = getC(toEl);
                 const dx = p2.x - p1.x;
                 const dy = p2.y - p1.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist === 0) return;
-                const parseRadius = (el) => el.classList.contains('rounded-full') ? el.offsetWidth/2 : el.offsetWidth/2 + 10;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist === 0) return;
+                const parseRadius = (el) => el.classList.contains('rounded-full') ? el.offsetWidth / 2 : el.offsetWidth / 2 + 10;
                 const r1 = parseRadius(fromEl) + 5;
                 const r2 = parseRadius(toEl) + 15; // Extra padding for arrow head
-                const sx = p1.x + (dx/dist)*r1;
-                const sy = p1.y + (dy/dist)*r1;
-                const ex = p2.x - (dx/dist)*r2;
-                const ey = p2.y - (dy/dist)*r2;
+                const sx = p1.x + (dx / dist) * r1;
+                const sy = p1.y + (dy / dist) * r1;
+                const ex = p2.x - (dx / dist) * r2;
+                const ey = p2.y - (dy / dist) * r2;
 
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("d", `M ${sx} ${sy} L ${ex} ${ey}`);
@@ -362,17 +473,17 @@
             if (studentBDiv) { studentBDiv.classList.remove("animate-hold", "ring-4", "ring-green-400", "ring-red-500", "scale-105", "shadow-purple-500/50", "shadow-red-500/50", "animate-blocked"); studentBDiv.style.transform = ''; }
 
             const updateStatus = (div, textElem, hold) => {
-                 if (hold === 'book1') {
-                     textElem.innerHTML = "<span class='text-amber-400 font-bold'>📘 Book 1</span> ✅";
-                     if (div) { div.classList.add("animate-hold", "ring-4", "ring-amber-400", "shadow-lg", "shadow-amber-500/30"); div.style.transform = 'translateY(-5px)'; }
-                 } else if (hold === 'book2') {
-                     textElem.innerHTML = "<span class='text-emerald-400 font-bold'>📗 Book 2</span> ✅";
-                     if (div) { div.classList.add("animate-hold", "ring-4", "ring-emerald-400", "shadow-lg", "shadow-emerald-500/30"); div.style.transform = 'translateY(-5px)'; }
-                 } else {
-                     textElem.innerText = "📭 Empty";
-                 }
+                if (hold === 'book1') {
+                    textElem.innerHTML = "<span class='text-amber-400 font-bold'>📘 Book 1</span> ✅";
+                    if (div) { div.classList.add("animate-hold", "ring-4", "ring-amber-400", "shadow-lg", "shadow-amber-500/30"); div.style.transform = 'translateY(-5px)'; }
+                } else if (hold === 'book2') {
+                    textElem.innerHTML = "<span class='text-emerald-400 font-bold'>📗 Book 2</span> ✅";
+                    if (div) { div.classList.add("animate-hold", "ring-4", "ring-emerald-400", "shadow-lg", "shadow-emerald-500/30"); div.style.transform = 'translateY(-5px)'; }
+                } else {
+                    textElem.innerText = "📭 Empty";
+                }
             };
-            
+
             updateStatus(studentADiv, statusAText, aliceHold);
             updateStatus(studentBDiv, statusBText, bobHold);
 
@@ -380,16 +491,16 @@
             if (aliceHold === 'book2' || bobHold === 'book2') { book2Div.classList.add("ring-4", "ring-green-400", "scale-105", "shadow-2xl", "shadow-green-500/50"); book2Div.style.transform = 'translateY(-10px)'; }
 
             if (aliceReq && aliceReq.includes('blocked') && studentADiv) {
-                 studentADiv.classList.add("ring-4", "ring-red-500", "animate-blocked", "shadow-lg", "shadow-red-500/50");
+                studentADiv.classList.add("ring-4", "ring-red-500", "animate-blocked", "shadow-lg", "shadow-red-500/50");
             }
             if (bobReq && bobReq.includes('blocked') && studentBDiv) {
-                 studentBDiv.classList.add("ring-4", "ring-red-500", "animate-blocked", "shadow-lg", "shadow-red-500/50");
+                studentBDiv.classList.add("ring-4", "ring-red-500", "animate-blocked", "shadow-lg", "shadow-red-500/50");
             }
 
             if (customMsg && customMsg !== "reset") {
                 if (msgBox) msgBox.innerHTML = customMsg;
             }
-            
+
             drawEdges();
         }
 
@@ -399,7 +510,7 @@
         async function runDeadlockAnimation() {
             resetAnimationState("🚀 <span class='animate-pulse text-red-400 font-bold'>Starting Deadlock Simulation...</span>");
             await wait(800);
-            
+
             // Step 1: Alice gets Book 1, Bob gets Book 2 (Simultaneous)
             aliceReq = 'book1-req';
             bobReq = 'book2-req';
@@ -431,7 +542,7 @@
         async function runFullAnimation() {
             resetAnimationState("🚀 <span class='animate-pulse text-blue-300 font-bold'>Starting Prevention Simulation...</span>");
             await wait(800);
-            
+
             // Step 1: Alice requests Book 1
             aliceReq = 'book1-req';
             updateAnimationVisuals("👀 <strong>Step 1:</strong> Alice <span class='text-blue-400 font-bold'>requests</span> <strong class='text-amber-300'>Book 1 (lower ID)</strong> following the Rule.");
@@ -567,9 +678,9 @@
 
             const disableBtns = (disable) => {
                 [pvBtn, dlBtn].forEach(btn => {
-                    if(!btn) return;
+                    if (!btn) return;
                     btn.disabled = disable;
-                    if(disable) btn.classList.add('opacity-60', 'cursor-not-allowed', 'scale-95');
+                    if (disable) btn.classList.add('opacity-60', 'cursor-not-allowed', 'scale-95');
                     else btn.classList.remove('opacity-60', 'cursor-not-allowed', 'scale-95');
                 });
             };
@@ -591,7 +702,7 @@
                     disableBtns(false);
                 });
             }
-            
+
             // Ensure lines draw correctly when page is rendered and displayed
             setTimeout(drawEdges, 100);
         }
